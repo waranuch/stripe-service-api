@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Service API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+        .swagger-ui .topbar {
+            background-color: #1f2937;
+        }
+        .swagger-ui .topbar .download-url-wrapper {
+            display: none;
+        }
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .custom-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        .custom-header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .info-section {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            padding: 0 2rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-card h3 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+            font-size: 1.25rem;
+        }
+        .info-card ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        .info-card li {
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #10b981;
+            color: white;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .endpoint-count {
+            background: #3b82f6;
+        }
+        .coverage-badge {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        <h1>🚀 Stripe Service API</h1>
+        <p>Clean & Simple Payment Processing Service</p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>📊 API Overview</h3>
+                <ul>
+                    <li><span class="badge endpoint-count">10 Endpoints</span> - RESTful API design</li>
+                    <li><span class="badge coverage-badge">80.5% Coverage</span> - Comprehensive testing</li>
+                    <li><span class="badge">Go 1.21</span> - Modern Go implementation</li>
+                    <li><span class="badge">OpenAPI 3.0</span> - Industry standard docs</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3>🔧 Core Features</h3>
+                <ul>
+                    <li>Customer Management (Create, Get, List)</li>
+                    <li>Payment Processing (Intents & Confirmation)</li>
+                    <li>Product Catalog (Products & Prices)</li>
+                    <li>Subscription Management</li>
+                    <li>Input Validation & Error Handling</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3>🚀 Quick Start</h3>
+                <ul>
+                    <li><code>make start-dev</code> - Start development server</li>
+                    <li><code>make test-api</code> - Test all endpoints</li>
+                    <li><code>make test-data</code> - Create sample data</li>
+                    <li><code>curl localhost:8080/api/v1/health</code> - Health check</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3>📚 Resources</h3>
+                <ul>
+                    <li><a href="https://stripe.com/docs/api" target="_blank">Stripe API Documentation</a></li>
+                    <li><a href="../README.md">Project README</a></li>
+                    <li><a href="../scripts/README.md">Testing Scripts Guide</a></li>
+                    <li><a href="../openapi.yaml">OpenAPI Specification</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: '../openapi.yaml',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                tryItOutEnabled: true,
+                requestInterceptor: (request) => {
+                    // Add any custom headers or modifications here
+                    return request;
+                },
+                responseInterceptor: (response) => {
+                    // Handle responses here
+                    return response;
+                }
+            });
+        };
+    </script>
+</body>
+</html> 

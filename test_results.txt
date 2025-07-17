@@ -1,0 +1,256 @@
+=== RUN   TestSetupRouter
+--- PASS: TestSetupRouter (0.00s)
+=== RUN   TestHealthEndpoint
+2025/07/17 10:19:45 HTTP Request - Method: GET, Path: /api/v1/health, Status: 200, Duration: 209.542µs, UserAgent: , RemoteAddr: 192.0.2.1:1234
+--- PASS: TestHealthEndpoint (0.00s)
+=== RUN   TestLoggingMiddleware
+2025/07/17 10:19:45 HTTP Request - Method: GET, Path: /test, Status: 200, Duration: 2µs, UserAgent: , RemoteAddr: 192.0.2.1:1234
+--- PASS: TestLoggingMiddleware (0.00s)
+=== RUN   TestCorsMiddleware
+=== RUN   TestCorsMiddleware/GET_request
+=== RUN   TestCorsMiddleware/OPTIONS_request
+--- PASS: TestCorsMiddleware (0.00s)
+    --- PASS: TestCorsMiddleware/GET_request (0.00s)
+    --- PASS: TestCorsMiddleware/OPTIONS_request (0.00s)
+=== RUN   TestResponseWriterWrapper
+--- PASS: TestResponseWriterWrapper (0.00s)
+=== RUN   TestServerConfiguration
+--- PASS: TestServerConfiguration (0.00s)
+PASS
+coverage: 60.8% of statements
+ok  	stripe-service	1.621s	coverage: 60.8% of statements
+=== RUN   TestLoad
+=== RUN   TestLoad/default_values
+=== RUN   TestLoad/custom_values
+=== RUN   TestLoad/invalid_port_defaults_to_8080
+--- PASS: TestLoad (0.00s)
+    --- PASS: TestLoad/default_values (0.00s)
+    --- PASS: TestLoad/custom_values (0.00s)
+    --- PASS: TestLoad/invalid_port_defaults_to_8080 (0.00s)
+=== RUN   TestGetEnv
+=== RUN   TestGetEnv/returns_env_value_when_set
+=== RUN   TestGetEnv/returns_default_when_env_not_set
+--- PASS: TestGetEnv (0.00s)
+    --- PASS: TestGetEnv/returns_env_value_when_set (0.00s)
+    --- PASS: TestGetEnv/returns_default_when_env_not_set (0.00s)
+=== RUN   TestGetEnvAsInt
+=== RUN   TestGetEnvAsInt/returns_env_value_when_set_and_valid
+=== RUN   TestGetEnvAsInt/returns_default_when_env_not_set
+=== RUN   TestGetEnvAsInt/returns_default_when_env_value_is_invalid
+--- PASS: TestGetEnvAsInt (0.00s)
+    --- PASS: TestGetEnvAsInt/returns_env_value_when_set_and_valid (0.00s)
+    --- PASS: TestGetEnvAsInt/returns_default_when_env_not_set (0.00s)
+    --- PASS: TestGetEnvAsInt/returns_default_when_env_value_is_invalid (0.00s)
+PASS
+coverage: 100.0% of statements
+ok  	stripe-service/config	0.725s	coverage: 100.0% of statements
+=== RUN   TestNewStripeHandler
+--- PASS: TestNewStripeHandler (0.00s)
+=== RUN   TestStripeHandler_HealthCheck
+--- PASS: TestStripeHandler_HealthCheck (0.00s)
+=== RUN   TestStripeHandler_CreateCustomer
+=== RUN   TestStripeHandler_CreateCustomer/valid_customer_creation
+=== RUN   TestStripeHandler_CreateCustomer/invalid_JSON
+=== RUN   TestStripeHandler_CreateCustomer/missing_required_fields
+=== RUN   TestStripeHandler_CreateCustomer/service_error
+2025/07/17 10:19:44 Service error - Operation: create customer, Error: stripe error, Details: map[email:test@example.com name:John Doe]
+--- PASS: TestStripeHandler_CreateCustomer (0.00s)
+    --- PASS: TestStripeHandler_CreateCustomer/valid_customer_creation (0.00s)
+    --- PASS: TestStripeHandler_CreateCustomer/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_CreateCustomer/missing_required_fields (0.00s)
+    --- PASS: TestStripeHandler_CreateCustomer/service_error (0.00s)
+=== RUN   TestStripeHandler_GetCustomer
+=== RUN   TestStripeHandler_GetCustomer/valid_customer_ID
+=== RUN   TestStripeHandler_GetCustomer/empty_customer_ID
+=== RUN   TestStripeHandler_GetCustomer/service_error
+2025/07/17 10:19:44 Service error - Operation: get customer, Error: customer not found, Details: map[customer_id:cus_123]
+--- PASS: TestStripeHandler_GetCustomer (0.00s)
+    --- PASS: TestStripeHandler_GetCustomer/valid_customer_ID (0.00s)
+    --- PASS: TestStripeHandler_GetCustomer/empty_customer_ID (0.00s)
+    --- PASS: TestStripeHandler_GetCustomer/service_error (0.00s)
+=== RUN   TestStripeHandler_ListCustomers
+=== RUN   TestStripeHandler_ListCustomers/successful_list
+=== RUN   TestStripeHandler_ListCustomers/list_with_limit_parameter
+=== RUN   TestStripeHandler_ListCustomers/list_with_invalid_limit_parameter
+=== RUN   TestStripeHandler_ListCustomers/service_error
+2025/07/17 10:19:44 Service error - Operation: list customers, Error: list error, Details: map[cursor: limit:0]
+--- PASS: TestStripeHandler_ListCustomers (0.00s)
+    --- PASS: TestStripeHandler_ListCustomers/successful_list (0.00s)
+    --- PASS: TestStripeHandler_ListCustomers/list_with_limit_parameter (0.00s)
+    --- PASS: TestStripeHandler_ListCustomers/list_with_invalid_limit_parameter (0.00s)
+    --- PASS: TestStripeHandler_ListCustomers/service_error (0.00s)
+=== RUN   TestStripeHandler_CreatePaymentIntent
+=== RUN   TestStripeHandler_CreatePaymentIntent/valid_payment_intent_creation
+=== RUN   TestStripeHandler_CreatePaymentIntent/invalid_JSON
+=== RUN   TestStripeHandler_CreatePaymentIntent/missing_required_fields
+=== RUN   TestStripeHandler_CreatePaymentIntent/service_error
+2025/07/17 10:19:44 Service error - Operation: create payment intent, Error: payment intent error, Details: map[amount:1000 currency:usd customer_id:]
+--- PASS: TestStripeHandler_CreatePaymentIntent (0.00s)
+    --- PASS: TestStripeHandler_CreatePaymentIntent/valid_payment_intent_creation (0.00s)
+    --- PASS: TestStripeHandler_CreatePaymentIntent/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_CreatePaymentIntent/missing_required_fields (0.00s)
+    --- PASS: TestStripeHandler_CreatePaymentIntent/service_error (0.00s)
+=== RUN   TestStripeHandler_ConfirmPaymentIntent
+=== RUN   TestStripeHandler_ConfirmPaymentIntent/valid_payment_intent_confirmation
+=== RUN   TestStripeHandler_ConfirmPaymentIntent/empty_payment_ID
+=== RUN   TestStripeHandler_ConfirmPaymentIntent/invalid_JSON
+=== RUN   TestStripeHandler_ConfirmPaymentIntent/service_error
+2025/07/17 10:19:44 Service error - Operation: confirm payment intent, Error: confirmation error, Details: map[payment_intent_id:pi_123 payment_method_id:pm_card_visa]
+--- PASS: TestStripeHandler_ConfirmPaymentIntent (0.00s)
+    --- PASS: TestStripeHandler_ConfirmPaymentIntent/valid_payment_intent_confirmation (0.00s)
+    --- PASS: TestStripeHandler_ConfirmPaymentIntent/empty_payment_ID (0.00s)
+    --- PASS: TestStripeHandler_ConfirmPaymentIntent/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_ConfirmPaymentIntent/service_error (0.00s)
+=== RUN   TestStripeHandler_CreateProduct
+=== RUN   TestStripeHandler_CreateProduct/valid_product_creation
+=== RUN   TestStripeHandler_CreateProduct/invalid_JSON
+=== RUN   TestStripeHandler_CreateProduct/missing_required_fields
+=== RUN   TestStripeHandler_CreateProduct/service_error
+2025/07/17 10:19:44 Service error - Operation: create product, Error: product error, Details: map[active:true name:Test Product]
+--- PASS: TestStripeHandler_CreateProduct (0.00s)
+    --- PASS: TestStripeHandler_CreateProduct/valid_product_creation (0.00s)
+    --- PASS: TestStripeHandler_CreateProduct/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_CreateProduct/missing_required_fields (0.00s)
+    --- PASS: TestStripeHandler_CreateProduct/service_error (0.00s)
+=== RUN   TestStripeHandler_CreatePrice
+=== RUN   TestStripeHandler_CreatePrice/valid_price_creation
+=== RUN   TestStripeHandler_CreatePrice/invalid_JSON
+=== RUN   TestStripeHandler_CreatePrice/missing_required_fields
+=== RUN   TestStripeHandler_CreatePrice/service_error
+2025/07/17 10:19:44 Service error - Operation: create price, Error: price error, Details: map[currency:usd product_id:prod_123 unit_amount:1000]
+--- PASS: TestStripeHandler_CreatePrice (0.00s)
+    --- PASS: TestStripeHandler_CreatePrice/valid_price_creation (0.00s)
+    --- PASS: TestStripeHandler_CreatePrice/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_CreatePrice/missing_required_fields (0.00s)
+    --- PASS: TestStripeHandler_CreatePrice/service_error (0.00s)
+=== RUN   TestStripeHandler_CreateSubscription
+=== RUN   TestStripeHandler_CreateSubscription/valid_subscription_creation
+=== RUN   TestStripeHandler_CreateSubscription/invalid_JSON
+=== RUN   TestStripeHandler_CreateSubscription/missing_required_fields
+=== RUN   TestStripeHandler_CreateSubscription/service_error
+2025/07/17 10:19:44 Service error - Operation: create subscription, Error: subscription error, Details: map[customer_id:cus_123 price_id:price_123]
+--- PASS: TestStripeHandler_CreateSubscription (0.00s)
+    --- PASS: TestStripeHandler_CreateSubscription/valid_subscription_creation (0.00s)
+    --- PASS: TestStripeHandler_CreateSubscription/invalid_JSON (0.00s)
+    --- PASS: TestStripeHandler_CreateSubscription/missing_required_fields (0.00s)
+    --- PASS: TestStripeHandler_CreateSubscription/service_error (0.00s)
+=== RUN   TestStripeHandler_CancelSubscription
+=== RUN   TestStripeHandler_CancelSubscription/valid_subscription_cancellation
+=== RUN   TestStripeHandler_CancelSubscription/empty_subscription_ID
+=== RUN   TestStripeHandler_CancelSubscription/service_error
+2025/07/17 10:19:44 Service error - Operation: cancel subscription, Error: cancellation error, Details: map[subscription_id:sub_123]
+--- PASS: TestStripeHandler_CancelSubscription (0.00s)
+    --- PASS: TestStripeHandler_CancelSubscription/valid_subscription_cancellation (0.00s)
+    --- PASS: TestStripeHandler_CancelSubscription/empty_subscription_ID (0.00s)
+    --- PASS: TestStripeHandler_CancelSubscription/service_error (0.00s)
+=== RUN   TestStripeHandler_WriteJSON
+--- PASS: TestStripeHandler_WriteJSON (0.00s)
+=== RUN   TestStripeHandler_WriteError
+--- PASS: TestStripeHandler_WriteError (0.00s)
+PASS
+coverage: 97.2% of statements
+ok  	stripe-service/internal/handlers	0.422s	coverage: 97.2% of statements
+=== RUN   TestCreateCustomerRequest_Validation
+=== RUN   TestCreateCustomerRequest_Validation/valid_request
+=== RUN   TestCreateCustomerRequest_Validation/missing_email
+=== RUN   TestCreateCustomerRequest_Validation/invalid_email_format
+=== RUN   TestCreateCustomerRequest_Validation/missing_name
+=== RUN   TestCreateCustomerRequest_Validation/with_optional_fields
+--- PASS: TestCreateCustomerRequest_Validation (0.00s)
+    --- PASS: TestCreateCustomerRequest_Validation/valid_request (0.00s)
+    --- PASS: TestCreateCustomerRequest_Validation/missing_email (0.00s)
+    --- PASS: TestCreateCustomerRequest_Validation/invalid_email_format (0.00s)
+    --- PASS: TestCreateCustomerRequest_Validation/missing_name (0.00s)
+    --- PASS: TestCreateCustomerRequest_Validation/with_optional_fields (0.00s)
+=== RUN   TestCustomer_Structure
+--- PASS: TestCustomer_Structure (0.00s)
+=== RUN   TestListCustomersResponse_Structure
+--- PASS: TestListCustomersResponse_Structure (0.00s)
+=== RUN   TestCreatePaymentIntentRequest_Validation
+=== RUN   TestCreatePaymentIntentRequest_Validation/valid_request
+=== RUN   TestCreatePaymentIntentRequest_Validation/missing_amount
+=== RUN   TestCreatePaymentIntentRequest_Validation/zero_amount
+=== RUN   TestCreatePaymentIntentRequest_Validation/negative_amount
+=== RUN   TestCreatePaymentIntentRequest_Validation/missing_currency
+=== RUN   TestCreatePaymentIntentRequest_Validation/with_optional_fields
+--- PASS: TestCreatePaymentIntentRequest_Validation (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/valid_request (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/missing_amount (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/zero_amount (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/negative_amount (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/missing_currency (0.00s)
+    --- PASS: TestCreatePaymentIntentRequest_Validation/with_optional_fields (0.00s)
+=== RUN   TestConfirmPaymentIntentRequest_Validation
+=== RUN   TestConfirmPaymentIntentRequest_Validation/valid_request
+=== RUN   TestConfirmPaymentIntentRequest_Validation/empty_request
+=== RUN   TestConfirmPaymentIntentRequest_Validation/with_return_url
+--- PASS: TestConfirmPaymentIntentRequest_Validation (0.00s)
+    --- PASS: TestConfirmPaymentIntentRequest_Validation/valid_request (0.00s)
+    --- PASS: TestConfirmPaymentIntentRequest_Validation/empty_request (0.00s)
+    --- PASS: TestConfirmPaymentIntentRequest_Validation/with_return_url (0.00s)
+=== RUN   TestPaymentIntent_Structure
+--- PASS: TestPaymentIntent_Structure (0.00s)
+=== RUN   TestCreateProductRequest_Validation
+=== RUN   TestCreateProductRequest_Validation/valid_request
+=== RUN   TestCreateProductRequest_Validation/missing_name
+=== RUN   TestCreateProductRequest_Validation/with_optional_fields
+--- PASS: TestCreateProductRequest_Validation (0.00s)
+    --- PASS: TestCreateProductRequest_Validation/valid_request (0.00s)
+    --- PASS: TestCreateProductRequest_Validation/missing_name (0.00s)
+    --- PASS: TestCreateProductRequest_Validation/with_optional_fields (0.00s)
+=== RUN   TestCreatePriceRequest_Validation
+=== RUN   TestCreatePriceRequest_Validation/valid_request
+=== RUN   TestCreatePriceRequest_Validation/missing_product_id
+=== RUN   TestCreatePriceRequest_Validation/missing_unit_amount
+=== RUN   TestCreatePriceRequest_Validation/zero_unit_amount
+=== RUN   TestCreatePriceRequest_Validation/negative_unit_amount
+=== RUN   TestCreatePriceRequest_Validation/missing_currency
+=== RUN   TestCreatePriceRequest_Validation/with_recurring
+--- PASS: TestCreatePriceRequest_Validation (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/valid_request (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/missing_product_id (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/missing_unit_amount (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/zero_unit_amount (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/negative_unit_amount (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/missing_currency (0.00s)
+    --- PASS: TestCreatePriceRequest_Validation/with_recurring (0.00s)
+=== RUN   TestCreateSubscriptionRequest_Validation
+=== RUN   TestCreateSubscriptionRequest_Validation/valid_request
+=== RUN   TestCreateSubscriptionRequest_Validation/missing_customer_id
+=== RUN   TestCreateSubscriptionRequest_Validation/missing_price_id
+=== RUN   TestCreateSubscriptionRequest_Validation/with_optional_fields
+--- PASS: TestCreateSubscriptionRequest_Validation (0.00s)
+    --- PASS: TestCreateSubscriptionRequest_Validation/valid_request (0.00s)
+    --- PASS: TestCreateSubscriptionRequest_Validation/missing_customer_id (0.00s)
+    --- PASS: TestCreateSubscriptionRequest_Validation/missing_price_id (0.00s)
+    --- PASS: TestCreateSubscriptionRequest_Validation/with_optional_fields (0.00s)
+=== RUN   TestProduct_Structure
+--- PASS: TestProduct_Structure (0.00s)
+=== RUN   TestPrice_Structure
+--- PASS: TestPrice_Structure (0.00s)
+=== RUN   TestSubscription_Structure
+--- PASS: TestSubscription_Structure (0.00s)
+PASS
+coverage: [no statements]
+ok  	stripe-service/internal/models	1.023s	coverage: [no statements]
+=== RUN   TestNewStripeService
+--- PASS: TestNewStripeService (0.00s)
+=== RUN   TestStripeService_Constants
+--- PASS: TestStripeService_Constants (0.00s)
+=== RUN   TestStripeService_ConvertStripeCustomer
+--- PASS: TestStripeService_ConvertStripeCustomer (0.00s)
+=== RUN   TestStripeService_ListCustomersDefaultLimit
+[ERROR] Request error from Stripe (status 401): {"status":401,"message":"Invalid API Key provided: sk_test_123","type":"invalid_request_error"}
+--- PASS: TestStripeService_ListCustomersDefaultLimit (0.17s)
+=== RUN   TestStripeService_ContextUsage
+[ERROR] Request failed with error: Post "https://api.stripe.com/v1/customers": context canceled
+--- PASS: TestStripeService_ContextUsage (0.00s)
+=== RUN   TestStripeService_ServiceInterface
+[ERROR] Request error from Stripe (status 401): {"status":401,"message":"Invalid API Key provided: sk_test_123","type":"invalid_request_error"}
+[ERROR] Request error from Stripe (status 401): {"status":401,"message":"Invalid API Key provided: sk_test_123","type":"invalid_request_error"}
+[ERROR] Request error from Stripe (status 401): {"status":401,"message":"Invalid API Key provided: sk_test_123","type":"invalid_request_error"}
+--- PASS: TestStripeService_ServiceInterface (0.11s)
+PASS
+coverage: 22.3% of statements
+ok  	stripe-service/internal/service	1.598s	coverage: 22.3% of statements
+	stripe-service/scripts		coverage: 0.0% of statements

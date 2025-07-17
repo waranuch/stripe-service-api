@@ -1,0 +1,811 @@
+openapi: 3.0.3
+info:
+  title: Stripe Service API
+  description: |
+    A clean, simple Golang service that provides RESTful API endpoints for Stripe payment processing.
+    
+    ## Features
+    - Customer Management (Create, Get, List)
+    - Payment Processing (Create and Confirm Payment Intents)
+    - Product Catalog (Create Products and Prices)
+    - Subscription Management (Create and Cancel)
+    - Comprehensive Input Validation
+    - Proper Error Handling
+    - Health Monitoring
+    
+    ## Authentication
+    This API uses Stripe's authentication system. The service is configured with a Stripe secret key.
+    
+    ## Base URL
+    All API endpoints are prefixed with `/api/v1`
+    
+  version: 1.0.0
+  contact:
+    name: Stripe Service API
+    url: https://github.com/your-org/stripe-service
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development server
+  - url: https://api.example.com/api/v1
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Check the health status of the service
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  service:
+                    type: string
+                    example: "stripe-service"
+
+  /customers:
+    post:
+      summary: Create Customer
+      description: Create a new customer in Stripe
+      operationId: createCustomer
+      tags:
+        - Customers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      summary: List Customers
+      description: Retrieve a list of customers
+      operationId: listCustomers
+      tags:
+        - Customers
+      parameters:
+        - name: limit
+          in: query
+          description: Number of customers to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: List of customers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /customers/{id}:
+    get:
+      summary: Get Customer
+      description: Retrieve a specific customer by ID
+      operationId: getCustomer
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          description: Customer ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /payment-intents:
+    post:
+      summary: Create Payment Intent
+      description: Create a new payment intent for processing payments
+      operationId: createPaymentIntent
+      tags:
+        - Payments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentIntentRequest'
+      responses:
+        '201':
+          description: Payment intent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /payment-intents/{id}/confirm:
+    post:
+      summary: Confirm Payment Intent
+      description: Confirm a payment intent to complete the payment
+      operationId: confirmPaymentIntent
+      tags:
+        - Payments
+      parameters:
+        - name: id
+          in: path
+          description: Payment Intent ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmPaymentIntentRequest'
+      responses:
+        '200':
+          description: Payment intent confirmed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /products:
+    post:
+      summary: Create Product
+      description: Create a new product in the catalog
+      operationId: createProduct
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /prices:
+    post:
+      summary: Create Price
+      description: Create a new price for a product
+      operationId: createPrice
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePriceRequest'
+      responses:
+        '201':
+          description: Price created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Price'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions:
+    post:
+      summary: Create Subscription
+      description: Create a new subscription for a customer
+      operationId: createSubscription
+      tags:
+        - Subscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+      responses:
+        '201':
+          description: Subscription created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/{id}:
+    delete:
+      summary: Cancel Subscription
+      description: Cancel an existing subscription
+      operationId: cancelSubscription
+      tags:
+        - Subscriptions
+      parameters:
+        - name: id
+          in: path
+          description: Subscription ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the customer
+          example: "cus_1234567890"
+        email:
+          type: string
+          format: email
+          description: Customer's email address
+          example: "customer@example.com"
+        name:
+          type: string
+          description: Customer's full name
+          example: "John Doe"
+        phone:
+          type: string
+          description: Customer's phone number
+          example: "+1234567890"
+        description:
+          type: string
+          description: Optional description of the customer
+          example: "Premium customer"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the customer was created
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the customer was last updated
+          example: "2023-12-01T10:30:00Z"
+      required:
+        - id
+        - email
+        - name
+        - created_at
+        - updated_at
+
+    CreateCustomerRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Customer's email address
+          example: "customer@example.com"
+        name:
+          type: string
+          description: Customer's full name
+          example: "John Doe"
+        phone:
+          type: string
+          description: Customer's phone number
+          example: "+1234567890"
+        description:
+          type: string
+          description: Optional description of the customer
+          example: "Premium customer"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+      required:
+        - email
+        - name
+
+    ListCustomersResponse:
+      type: object
+      properties:
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          description: List of customers
+        has_more:
+          type: boolean
+          description: Whether there are more customers available
+          example: false
+        next_cursor:
+          type: string
+          description: Cursor for the next page of results
+          example: "cus_1234567890"
+      required:
+        - customers
+        - has_more
+
+    PaymentIntent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the payment intent
+          example: "pi_1234567890"
+        amount:
+          type: integer
+          format: int64
+          description: Amount in cents
+          example: 2000
+        currency:
+          type: string
+          description: Three-letter ISO currency code
+          example: "usd"
+        status:
+          type: string
+          description: Status of the payment intent
+          enum: ["requires_payment_method", "requires_confirmation", "requires_action", "processing", "succeeded", "canceled"]
+          example: "requires_payment_method"
+        customer_id:
+          type: string
+          description: ID of the customer associated with this payment intent
+          example: "cus_1234567890"
+        description:
+          type: string
+          description: Optional description of the payment intent
+          example: "Payment for order #123"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        client_secret:
+          type: string
+          description: Client secret for confirming the payment on the frontend
+          example: "pi_1234567890_secret_abcdef"
+        payment_method_id:
+          type: string
+          description: ID of the payment method used
+          example: "pm_1234567890"
+        confirmation_method:
+          type: string
+          description: Method for confirming the payment intent
+          enum: ["automatic", "manual"]
+          example: "automatic"
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the payment intent was created
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the payment intent was last updated
+          example: "2023-12-01T10:30:00Z"
+      required:
+        - id
+        - amount
+        - currency
+        - status
+        - created_at
+        - updated_at
+
+    CreatePaymentIntentRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Amount in cents
+          example: 2000
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Three-letter ISO currency code
+          example: "usd"
+        customer_id:
+          type: string
+          description: ID of the customer for this payment intent
+          example: "cus_1234567890"
+        description:
+          type: string
+          description: Optional description of the payment intent
+          example: "Payment for order #123"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        payment_method_id:
+          type: string
+          description: ID of the payment method to use
+          example: "pm_1234567890"
+        confirmation_method:
+          type: string
+          description: Method for confirming the payment intent
+          enum: ["automatic", "manual"]
+          example: "automatic"
+      required:
+        - amount
+        - currency
+
+    ConfirmPaymentIntentRequest:
+      type: object
+      properties:
+        payment_method_id:
+          type: string
+          description: ID of the payment method to use for confirmation
+          example: "pm_1234567890"
+        return_url:
+          type: string
+          format: uri
+          description: URL to redirect to after confirmation
+          example: "https://example.com/return"
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the product
+          example: "prod_1234567890"
+        name:
+          type: string
+          description: Product name
+          example: "Premium Subscription"
+        description:
+          type: string
+          description: Product description
+          example: "Monthly premium subscription plan"
+        active:
+          type: boolean
+          description: Whether the product is active
+          example: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the product was created
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the product was last updated
+          example: "2023-12-01T10:30:00Z"
+      required:
+        - id
+        - name
+        - active
+        - created_at
+        - updated_at
+
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Product name
+          example: "Premium Subscription"
+        description:
+          type: string
+          description: Product description
+          example: "Monthly premium subscription plan"
+        active:
+          type: boolean
+          description: Whether the product should be active
+          default: true
+          example: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+      required:
+        - name
+
+    Price:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the price
+          example: "price_1234567890"
+        product_id:
+          type: string
+          description: ID of the product this price belongs to
+          example: "prod_1234567890"
+        unit_amount:
+          type: integer
+          format: int64
+          description: Price in cents
+          example: 999
+        currency:
+          type: string
+          description: Three-letter ISO currency code
+          example: "usd"
+        type:
+          type: string
+          description: Type of pricing
+          enum: ["one_time", "recurring"]
+          example: "recurring"
+        recurring_interval:
+          type: string
+          description: Billing interval for recurring prices
+          enum: ["day", "week", "month", "year"]
+          example: "month"
+        active:
+          type: boolean
+          description: Whether the price is active
+          example: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the price was created
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the price was last updated
+          example: "2023-12-01T10:30:00Z"
+      required:
+        - id
+        - product_id
+        - unit_amount
+        - currency
+        - type
+        - active
+        - created_at
+        - updated_at
+
+    CreatePriceRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+          description: ID of the product this price belongs to
+          example: "prod_1234567890"
+        unit_amount:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Price in cents
+          example: 999
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Three-letter ISO currency code
+          example: "usd"
+        type:
+          type: string
+          description: Type of pricing
+          enum: ["one_time", "recurring"]
+          example: "recurring"
+        recurring_interval:
+          type: string
+          description: Billing interval for recurring prices
+          enum: ["day", "week", "month", "year"]
+          example: "month"
+        active:
+          type: boolean
+          description: Whether the price should be active
+          default: true
+          example: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+      required:
+        - product_id
+        - unit_amount
+        - currency
+        - type
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the subscription
+          example: "sub_1234567890"
+        customer_id:
+          type: string
+          description: ID of the customer
+          example: "cus_1234567890"
+        price_id:
+          type: string
+          description: ID of the price
+          example: "price_1234567890"
+        status:
+          type: string
+          description: Status of the subscription
+          enum: ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"]
+          example: "active"
+        current_period_start:
+          type: string
+          format: date-time
+          description: Start of the current billing period
+          example: "2023-12-01T00:00:00Z"
+        current_period_end:
+          type: string
+          format: date-time
+          description: End of the current billing period
+          example: "2024-01-01T00:00:00Z"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the subscription was created
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the subscription was last updated
+          example: "2023-12-01T10:30:00Z"
+      required:
+        - id
+        - customer_id
+        - price_id
+        - status
+        - current_period_start
+        - current_period_end
+        - created_at
+        - updated_at
+
+    CreateSubscriptionRequest:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          description: ID of the customer
+          example: "cus_1234567890"
+        price_id:
+          type: string
+          description: ID of the price
+          example: "price_1234567890"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Set of key-value pairs for storing additional information
+      required:
+        - customer_id
+        - price_id
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Validation error: email is required"
+        code:
+          type: string
+          description: Error code
+          example: "validation_error"
+        details:
+          type: object
+          description: Additional error details
+      required:
+        - error
+
+  responses:
+    BadRequest:
+      description: Bad request - validation error or malformed request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Customers
+    description: Customer management operations
+  - name: Payments
+    description: Payment processing operations
+  - name: Products
+    description: Product catalog operations
+  - name: Subscriptions
+    description: Subscription management operations 

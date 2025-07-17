@@ -277,15 +277,59 @@ type stripeCustomerAdapter struct {
 	customer *stripe.Customer
 }
 
-func (a *stripeCustomerAdapter) GetID() string                  { return a.customer.ID }
-func (a *stripeCustomerAdapter) GetEmail() string               { return a.customer.Email }
-func (a *stripeCustomerAdapter) GetName() string                { return a.customer.Name }
-func (a *stripeCustomerAdapter) GetPhone() string               { return a.customer.Phone }
-func (a *stripeCustomerAdapter) GetDescription() string         { return a.customer.Description }
-func (a *stripeCustomerAdapter) GetMetadata() map[string]string { return a.customer.Metadata }
-func (a *stripeCustomerAdapter) GetCreated() int64              { return a.customer.Created }
+func (a *stripeCustomerAdapter) GetID() string {
+	if a.customer == nil {
+		return ""
+	}
+	return a.customer.ID
+}
+
+func (a *stripeCustomerAdapter) GetEmail() string {
+	if a.customer == nil {
+		return ""
+	}
+	return a.customer.Email
+}
+
+func (a *stripeCustomerAdapter) GetName() string {
+	if a.customer == nil {
+		return ""
+	}
+	return a.customer.Name
+}
+
+func (a *stripeCustomerAdapter) GetPhone() string {
+	if a.customer == nil {
+		return ""
+	}
+	return a.customer.Phone
+}
+
+func (a *stripeCustomerAdapter) GetDescription() string {
+	if a.customer == nil {
+		return ""
+	}
+	return a.customer.Description
+}
+
+func (a *stripeCustomerAdapter) GetMetadata() map[string]string {
+	if a.customer == nil {
+		return nil
+	}
+	return a.customer.Metadata
+}
+
+func (a *stripeCustomerAdapter) GetCreated() int64 {
+	if a.customer == nil {
+		return 0
+	}
+	return a.customer.Created
+}
 
 func (s *StripeService) convertStripeCustomer(stripeCustomer *stripe.Customer) *models.Customer {
+	if stripeCustomer == nil {
+		return nil
+	}
 	adapter := &stripeCustomerAdapter{customer: stripeCustomer}
 	return s.convertStripeCustomerInterface(adapter)
 }
@@ -307,6 +351,9 @@ func (s *StripeService) convertStripeCustomerInterface(stripeCustomer StripeCust
 }
 
 func (s *StripeService) convertStripePaymentIntent(stripePI *stripe.PaymentIntent) *models.PaymentIntent {
+	if stripePI == nil {
+		return nil
+	}
 	customerID := ""
 	if stripePI.Customer != nil {
 		customerID = stripePI.Customer.ID
@@ -329,6 +376,9 @@ func (s *StripeService) convertStripePaymentIntent(stripePI *stripe.PaymentInten
 }
 
 func (s *StripeService) convertStripeProduct(stripeProduct *stripe.Product) *models.Product {
+	if stripeProduct == nil {
+		return nil
+	}
 	createdAt := time.Unix(stripeProduct.Created, 0)
 	updatedAt := createdAt
 	if stripeProduct.Updated > 0 {
@@ -347,6 +397,9 @@ func (s *StripeService) convertStripeProduct(stripeProduct *stripe.Product) *mod
 }
 
 func (s *StripeService) convertStripePrice(stripePrice *stripe.Price) *models.Price {
+	if stripePrice == nil {
+		return nil
+	}
 	createdAt := time.Unix(stripePrice.Created, 0)
 
 	priceType := "one_time"
@@ -372,6 +425,9 @@ func (s *StripeService) convertStripePrice(stripePrice *stripe.Price) *models.Pr
 }
 
 func (s *StripeService) convertStripeSubscription(stripeSub *stripe.Subscription) *models.Subscription {
+	if stripeSub == nil {
+		return nil
+	}
 	createdAt := time.Unix(stripeSub.Created, 0)
 
 	return &models.Subscription{

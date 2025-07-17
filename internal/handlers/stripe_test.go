@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -862,4 +863,98 @@ func TestStripeHandler_WriteError(t *testing.T) {
 	if response["error"] != "test error" {
 		t.Errorf("Expected error 'test error', got '%s'", response["error"])
 	}
+}
+
+// Test ListCustomers with cursor parameter
+func TestStripeHandler_ListCustomers_WithCursor(t *testing.T) {
+	mockService := &MockStripeService{
+		shouldError: false,
+	}
+	handler := &StripeHandler{
+		stripeService: mockService,
+		validator:     validator.New(),
+	}
+
+	req := httptest.NewRequest("GET", "/customers?cursor=cursor_123&limit=5", nil)
+	rr := httptest.NewRecorder()
+
+	handler.ListCustomers(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, status)
+	}
+
+	var response models.ListCustomersResponse
+	if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
+		t.Errorf("Error unmarshaling response: %v", err)
+	}
+
+	// The mock returns an empty response, so we just check that it doesn't error
+	if response.Customers == nil {
+		t.Error("Expected customers slice, got nil")
+	}
+}
+
+// Test writeJSON with data that causes encoding error
+func TestStripeHandler_WriteJSON_EncodingError(t *testing.T) {
+	handler := &StripeHandler{}
+
+	rr := httptest.NewRecorder()
+
+	// Create data that will cause JSON encoding error (circular reference)
+	type circular struct {
+		Self *circular `json:"self"`
+	}
+	data := &circular{}
+	data.Self = data
+
+	handler.writeJSON(rr, http.StatusOK, data)
+
+	// Should still set the status code and content type
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, status)
+	}
+	if contentType := rr.Header().Get("Content-Type"); contentType != "application/json" {
+		t.Errorf("Expected Content-Type 'application/json', got '%s'", contentType)
+	}
+}
+
+// Test writeError with data that causes encoding error
+func TestStripeHandler_WriteError_EncodingError(t *testing.T) {
+	handler := &StripeHandler{}
+
+	// Create a custom ResponseWriter that fails on Write
+	failingWriter := &failingResponseWriter{
+		ResponseWriter: httptest.NewRecorder(),
+		shouldFail:     true,
+	}
+
+	handler.writeError(failingWriter, http.StatusInternalServerError, "test error")
+
+	// Should still set the status code and content type
+	if failingWriter.statusCode != http.StatusInternalServerError {
+		t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, failingWriter.statusCode)
+	}
+	if contentType := failingWriter.Header().Get("Content-Type"); contentType != "application/json" {
+		t.Errorf("Expected Content-Type 'application/json', got '%s'", contentType)
+	}
+}
+
+// Helper struct for testing encoding failures
+type failingResponseWriter struct {
+	http.ResponseWriter
+	shouldFail bool
+	statusCode int
+}
+
+func (f *failingResponseWriter) Write([]byte) (int, error) {
+	if f.shouldFail {
+		return 0, fmt.Errorf("write error")
+	}
+	return f.ResponseWriter.Write([]byte{})
+}
+
+func (f *failingResponseWriter) WriteHeader(statusCode int) {
+	f.statusCode = statusCode
+	f.ResponseWriter.WriteHeader(statusCode)
 }
